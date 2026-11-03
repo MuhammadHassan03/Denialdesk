@@ -19,3 +19,36 @@ export async function fetchPipelineHealth(): Promise<PipelineHealth> {
   const responseBody: unknown = await response.json();
   return pipelineHealthSchema.parse(responseBody);
 }
+
+const codeMeaningSchema = z.object({
+  code: z.string(),
+  official_text: z.string(),
+  plain_english: z.string(),
+  supported: z.boolean(),
+});
+
+export type CodeMeaning = {
+  code: string;
+  plainEnglish: string;
+  supported: boolean;
+};
+
+const HTTP_NOT_FOUND = 404;
+
+// A plain-English meaning for one denial code such as "CO-197". Null when the
+// pipeline has no meaning for it, so the page can say so in words.
+export async function fetchCodeMeaning(code: string): Promise<CodeMeaning | null> {
+  const env = readServerEnv();
+  const response = await fetch(`${env.PIPELINE_URL}/codes/${encodeURIComponent(code)}`, {
+    cache: "no-store",
+  });
+  if (response.status === HTTP_NOT_FOUND) {
+    return null;
+  }
+  if (!response.ok) {
+    throw new Error(`Code lookup failed with HTTP ${response.status}`);
+  }
+  const responseBody: unknown = await response.json();
+  const meaning = codeMeaningSchema.parse(responseBody);
+  return { code: meaning.code, plainEnglish: meaning.plain_english, supported: meaning.supported };
+}

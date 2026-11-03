@@ -23,6 +23,8 @@ import { logServerEvent } from "../errors";
 
 export type AuthFormState = {
   billerMessage: string | null;
+  // What the biller typed, sent back so a failed sign-in doesn't clear the email field.
+  email?: string;
 };
 
 const WRONG_CREDENTIALS_MESSAGE = "Email or password is incorrect.";
@@ -64,7 +66,7 @@ export async function signIn(
       details: { reason: "locked_out" },
     });
     logServerEvent("login_locked_out", { recentFailures });
-    return { billerMessage: LOCKED_OUT_MESSAGE };
+    return { billerMessage: LOCKED_OUT_MESSAGE, email };
   }
 
   const user = await findUserByEmail(db, email);
@@ -86,7 +88,7 @@ export async function signIn(
         details: { reason: "wrong_credentials", targetUserId: user?.id ?? null },
       });
     });
-    return { billerMessage: WRONG_CREDENTIALS_MESSAGE };
+    return { billerMessage: WRONG_CREDENTIALS_MESSAGE, email };
   }
 
   const sessionToken = newSecretToken();

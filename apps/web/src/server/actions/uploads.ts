@@ -1,7 +1,7 @@
 "use server";
 
 import { z } from "zod";
-import { formatIsoDate } from "@/lib/dates";
+import { formatIsoDate, todayInTimezone } from "@/lib/dates";
 import { checkUploadFile } from "@/lib/upload-files";
 import { requireSession } from "../auth/session";
 import { db } from "../db/client";
@@ -37,11 +37,6 @@ function remittanceSourceFor(fileName: string): "835" | "EOB" {
   return "835";
 }
 
-// The "en-CA" locale writes dates as YYYY-MM-DD, which is the shape lib/dates expects.
-function isoDateInTimezone(timestamp: Date, timezone: string): string {
-  return new Intl.DateTimeFormat("en-CA", { timeZone: timezone }).format(timestamp);
-}
-
 export async function uploadRemittanceFile(formData: FormData): Promise<UploadFileResult> {
   const biller = await requireSession();
   const uploadedFile = formData.get("file");
@@ -60,7 +55,7 @@ export async function uploadRemittanceFile(formData: FormData): Promise<UploadFi
   const existingRemittance = await findRemittanceByHash(db, organizationId, fileHash);
   if (existingRemittance !== null) {
     const uploadedOn = formatIsoDate(
-      isoDateInTimezone(existingRemittance.createdAt, biller.user.timezone),
+      todayInTimezone(existingRemittance.createdAt, biller.user.timezone),
     );
     return {
       outcome: "duplicate",
