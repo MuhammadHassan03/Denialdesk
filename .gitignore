@@ -1,0 +1,31 @@
+# dependencies
+node_modules/
+.pnpm-store/
+
+# next.js
+.next/
+out/
+next-env.d.ts
+*.tsbuildinfo
+
+# python
+__pycache__/
+*.py[cod]
+.venv/
+.mypy_cache/
+.ruff_cache/
+.pytest_cache/
+
+# environment: real secrets never go in the repo
+.env
+.env.*
+!.env.example
+
+# uploads and exports written locally during development
+storage/
+
+# os and editors
+.DS_Store
+Thumbs.db
+.vscode/
+.idea/

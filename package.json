@@ -1,0 +1,17 @@
+{
+  "name": "denialdesk",
+  "private": true,
+  "packageManager": "pnpm@12.16.1",
+  "scripts": {
+    "dev": "pnpm --filter @denialdesk/web dev",
+    "build": "pnpm --filter @denialdesk/web build",
+    "test": "pnpm --filter @denialdesk/web test",
+    "lint": "pnpm --filter @denialdesk/web lint",
+    "typecheck": "pnpm --filter @denialdesk/web typecheck",
+    "format": "prettier --write .",
+    "format:check": "prettier --check ."
+  },
+  "devDependencies": {
+    "prettier": "3.9.10"
+  }
+}

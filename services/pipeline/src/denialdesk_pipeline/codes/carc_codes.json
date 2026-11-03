@@ -1,0 +1,32 @@
+[
+  {
+    "carc_code": "4",
+    "official_text": "The procedure code is inconsistent with the modifier used, or a required modifier is missing.",
+    "plain_english": "The CPT/HCPCS code and its modifier don't match, or a modifier the payer needs is missing.",
+    "supported": true
+  },
+  {
+    "carc_code": "16",
+    "official_text": "Claim/service lacks information or has submission/billing error(s).",
+    "plain_english": "Something is missing or wrong on the claim. The RARC codes say what.",
+    "supported": true
+  },
+  {
+    "carc_code": "29",
+    "official_text": "The time limit for filing has expired.",
+    "plain_english": "The payer says the claim arrived after its timely filing limit.",
+    "supported": true
+  },
+  {
+    "carc_code": "50",
+    "official_text": "These are non-covered services because this is not deemed a 'medical necessity' by the payer.",
+    "plain_english": "The payer doesn't think the service was medically necessary for the diagnosis billed.",
+    "supported": true
+  },
+  {
+    "carc_code": "197",
+    "official_text": "Precertification/authorization/notification/pre-treatment absent.",
+    "plain_english": "The payer has no prior authorization on file for this service.",
+    "supported": true
+  }
+]
