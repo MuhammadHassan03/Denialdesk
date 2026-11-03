@@ -1,7 +1,12 @@
 import type { Metadata } from "next";
-import Link from "next/link";
+import { Geist, Geist_Mono, Source_Serif_4 } from "next/font/google";
 import type { ReactNode } from "react";
 import "./globals.css";
+
+const geist = Geist({ subsets: ["latin"], variable: "--font-geist" });
+const geistMono = Geist_Mono({ subsets: ["latin"], variable: "--font-geist-mono" });
+// Letters and policy quotes are set in a serif so they read like the document they become.
+const sourceSerif = Source_Serif_4({ subsets: ["latin"], variable: "--font-source-serif" });
 
 export const metadata: Metadata = {
   title: "Denialdesk",
@@ -13,19 +18,10 @@ type RootLayoutProps = {
 };
 
 export default function RootLayout({ children }: RootLayoutProps) {
+  const fontVariables = `${geist.variable} ${geistMono.variable} ${sourceSerif.variable}`;
   return (
-    <html lang="en">
-      <body className="min-h-screen bg-white text-gray-900">
-        <header className="border-b border-gray-200">
-          <nav className="mx-auto flex max-w-6xl gap-6 px-4 py-3 text-sm">
-            <span className="font-semibold">Denialdesk</span>
-            <Link href="/queue">Queue</Link>
-            <Link href="/upload">Upload</Link>
-            <Link href="/stats">Stats</Link>
-          </nav>
-        </header>
-        <main className="mx-auto max-w-6xl px-4 py-6">{children}</main>
-      </body>
+    <html lang="en" className={fontVariables}>
+      <body className="min-h-screen bg-canvas font-sans text-ink">{children}</body>
     </html>
   );
 }

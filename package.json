@@ -8,6 +8,7 @@
     "test": "pnpm --filter @denialdesk/web test",
     "lint": "pnpm --filter @denialdesk/web lint",
     "typecheck": "pnpm --filter @denialdesk/web typecheck",
+    "create-user": "pnpm --filter @denialdesk/web create-user",
     "format": "prettier --write .",
     "format:check": "prettier --check ."
   },

@@ -1,13 +1,13 @@
 from denialdesk_pipeline.codes.carc import find_carc_meaning, load_carc_meanings
+from denialdesk_pipeline.codes.supported_codes import SUPPORTED_DENIAL_CODES
 
-FIRST_SUPPORTED_CARC_CODES = {"4", "16", "29", "50", "197"}
 
-
-def test_all_first_supported_codes_are_in_the_data_file() -> None:
+def test_every_supported_code_has_a_meaning() -> None:
     meanings_by_code = load_carc_meanings()
 
-    for carc_code in FIRST_SUPPORTED_CARC_CODES:
-        assert meanings_by_code[carc_code].supported
+    for denial_code in SUPPORTED_DENIAL_CODES:
+        carc_code = denial_code.split("-")[1]
+        assert carc_code in meanings_by_code
 
 
 def test_known_code_returns_its_meaning() -> None:
@@ -15,13 +15,11 @@ def test_known_code_returns_its_meaning() -> None:
 
     meaning = find_carc_meaning("197", meanings_by_code)
 
+    assert meaning is not None
     assert "authorization" in meaning.plain_english
 
 
-def test_unknown_code_is_not_supported() -> None:
+def test_unknown_code_has_no_meaning() -> None:
     meanings_by_code = load_carc_meanings()
 
-    meaning = find_carc_meaning("999", meanings_by_code)
-
-    assert meaning.carc_code == "999"
-    assert not meaning.supported
+    assert find_carc_meaning("999", meanings_by_code) is None

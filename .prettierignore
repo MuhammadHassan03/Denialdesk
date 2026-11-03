@@ -5,3 +5,4 @@ services/
 db/migrations/
 fixtures/
 AGENTS.md
+FEATURES.md

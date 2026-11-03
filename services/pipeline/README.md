@@ -6,7 +6,7 @@ Python service that parses remittances, ranks denials, drafts fixes and checks t
 uv sync
 uv run pytest
 uv run ruff check . && uv run mypy --strict src
-uv run fastapi dev src/denialdesk_pipeline/api.py
+uv run fastapi dev src/denialdesk_pipeline/api.py --reload-dir src
 ```
 
 Pure code (no I/O): `normalize/`, `codes/` lookups, `rank/`, `rules/`.

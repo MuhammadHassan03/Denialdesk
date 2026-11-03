@@ -4,8 +4,11 @@ version = "0.1.0"
 description = "Denialdesk pipeline: parse remittances, rank denials, draft and check fixes."
 requires-python = ">=3.12,<3.13"
 dependencies = [
+    "cryptography>=50.0.2",
     "fastapi[standard]>=0.162.0",
+    "psycopg[binary]>=3.3.7",
     "pydantic>=2.14.2",
+    "tzdata>=2026.6",
 ]
 
 [dependency-groups]

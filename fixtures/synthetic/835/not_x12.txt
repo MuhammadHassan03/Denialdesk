@@ -1,0 +1,2 @@
+Patient statement export
+This is not an X12 file.

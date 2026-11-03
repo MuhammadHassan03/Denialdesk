@@ -8,6 +8,27 @@
       "when": 1793743253405,
       "tag": "0000_smart_black_queen",
       "breakpoints": true
+    },
+    {
+      "idx": 1,
+      "version": "7",
+      "when": 1793744162729,
+      "tag": "0001_drop_skeleton_tables",
+      "breakpoints": true
+    },
+    {
+      "idx": 2,
+      "version": "7",
+      "when": 1793744207086,
+      "tag": "0002_accounts_uploads_denials_audit",
+      "breakpoints": true
+    },
+    {
+      "idx": 3,
+      "version": "7",
+      "when": 1793744209579,
+      "tag": "0003_audit_events_append_only",
+      "breakpoints": true
     }
   ]
 }

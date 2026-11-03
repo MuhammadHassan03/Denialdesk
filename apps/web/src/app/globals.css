@@ -1,1 +1,125 @@
 @import "tailwindcss";
+
+/* Design tokens from the "Denialdesk biller screens" design canvas. */
+@theme {
+  --font-sans: var(--font-geist), system-ui, sans-serif;
+  --font-mono: var(--font-geist-mono), ui-monospace, monospace;
+  --font-serif: var(--font-source-serif), Georgia, serif;
+
+  --color-canvas: #f4f5f7;
+  --color-ink: #0e1726;
+  --color-ink-soft: #1d2939;
+  --color-muted: #4b5565;
+  --color-subtle: #344054;
+  --color-faint: #98a2b3;
+  --color-line: #e3e6eb;
+  --color-line-soft: #eef0f3;
+  --color-line-strong: #d0d5dd;
+  --color-well: #f9fafb;
+
+  --color-brand: #0b6e66;
+  --color-brand-dark: #08534d;
+  --color-brand-mid: #3e9e93;
+  --color-brand-light: #9ed3cc;
+  --color-brand-border: #7fc4bb;
+  --color-brand-soft: #e3f2f0;
+  --color-brand-tint: #f3faf9;
+  --color-brand-shadow: #bfe2dd;
+  --color-brand-night: #0a3d39;
+  --color-brand-mist: #c9e8e3;
+
+  --color-good: #067647;
+  --color-good-dark: #054f31;
+  --color-good-soft: #e7f6ec;
+  --color-good-shadow: #c9e8d3;
+
+  --color-warn: #b54708;
+  --color-warn-dark: #93370d;
+  --color-warn-soft: #fef0e4;
+  --color-warn-shadow: #f8d9bf;
+
+  --color-bad: #b42318;
+  --color-bad-dark: #912018;
+  --color-bad-soft: #fdecea;
+
+  --color-slate-shadow: #dce4ea;
+}
+
+/* In the base layer so Tailwind's utility classes (text-white on a link) still win. */
+@layer base {
+  body {
+    background: var(--color-canvas);
+    color: var(--color-ink);
+  }
+
+  a {
+    color: var(--color-brand);
+  }
+
+  a:hover {
+    color: var(--color-brand-dark);
+  }
+
+  :focus-visible {
+    outline: 2px solid var(--color-brand);
+    outline-offset: 2px;
+  }
+}
+
+/* Motion. Content is visible without it; every animation turns off for reduced motion. */
+@theme {
+  --animate-rise: rise 700ms cubic-bezier(0.22, 1, 0.36, 1) both;
+  --animate-pop: pop 500ms cubic-bezier(0.34, 1.56, 0.64, 1) both;
+  --animate-float: float 7s ease-in-out infinite;
+  --animate-float-slow: float 9s ease-in-out infinite;
+
+  @keyframes rise {
+    from {
+      opacity: 0;
+      transform: translateY(24px);
+    }
+    to {
+      opacity: 1;
+      transform: translateY(0);
+    }
+  }
+
+  @keyframes pop {
+    from {
+      opacity: 0;
+      scale: 0.85;
+    }
+    to {
+      opacity: 1;
+      scale: 1;
+    }
+  }
+
+  @keyframes float {
+    0%,
+    100% {
+      translate: 0 0;
+    }
+    50% {
+      translate: 0 -12px;
+    }
+  }
+}
+
+/* Sections fade up as they scroll into view, where the browser supports scroll timelines. */
+@supports (animation-timeline: view()) {
+  .reveal-on-scroll {
+    animation: rise linear both;
+    animation-timeline: view();
+    animation-range: entry 0% entry 40%;
+  }
+}
+
+@media (prefers-reduced-motion: reduce) {
+  *,
+  *::before,
+  *::after {
+    animation: none !important;
+    transition: none !important;
+  }
+}

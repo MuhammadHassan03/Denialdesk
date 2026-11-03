@@ -10,7 +10,8 @@
     "lint": "eslint .",
     "typecheck": "tsc --noEmit",
     "db:generate": "drizzle-kit generate",
-    "db:migrate": "drizzle-kit migrate"
+    "db:migrate": "drizzle-kit migrate",
+    "create-user": "tsx --env-file-if-exists=../../.env --conditions=react-server scripts/create-user.ts"
   },
   "dependencies": {
     "drizzle-orm": "0.45.4",
@@ -30,6 +31,7 @@
     "eslint": "10.14.0",
     "eslint-config-next": "16.4.5",
     "tailwindcss": "4.3.4",
+    "tsx": "4.23.15",
     "typescript": "6.0.3",
     "vitest": "5.1.0"
   }

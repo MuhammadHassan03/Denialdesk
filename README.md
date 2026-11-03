@@ -16,18 +16,25 @@ Read [AGENTS.md](AGENTS.md) before changing anything. It holds the scope, struct
 
 ## Getting started
 
-Needs Node 24+, pnpm, uv and a local Postgres.
+Needs Node 24+, pnpm, uv and Docker (or any local Postgres).
 
 ```
-cp .env.example .env            # then fill in DATABASE_URL and PIPELINE_URL
+docker run -d --name denialdesk-postgres -e POSTGRES_USER=denialdesk   -e POSTGRES_PASSWORD=denialdesk -e POSTGRES_DB=denialdesk -p 5432:5432 postgres:17
 
+cp .env.example .env            # then set FILE_ENCRYPTION_KEY and STORAGE_DIR
 pnpm install
+pnpm --filter @denialdesk/web db:migrate
+
+pnpm create-user --email biller@example.com --name "Jane Doe" --timezone America/Chicago
 pnpm dev                        # web app on localhost:3000
 
 cd services/pipeline
 uv sync
-uv run fastapi dev src/denialdesk_pipeline/api.py   # pipeline API on localhost:8000
+uv run --env-file ../../.env python -m denialdesk_pipeline.jobs.worker   # processes uploads
+uv run fastapi dev src/denialdesk_pipeline/api.py --reload-dir src                        # pipeline API on :8000
 ```
+
+`create-user` prints a one-time setup link. Run it again with the same email to get a new one.
 
 ## Checks
 
@@ -38,6 +45,14 @@ pnpm lint && pnpm typecheck && pnpm test
 
 cd services/pipeline
 uv run ruff check . && uv run mypy --strict src && uv run pytest
+```
+
+The worker tests run against a real Postgres when `TEST_DATABASE_URL` is set, and are skipped otherwise. Use a separate database so test rows never mix with your dev data:
+
+```
+docker exec denialdesk-postgres psql -U denialdesk -d postgres -c "CREATE DATABASE denialdesk_test;"
+DATABASE_URL=postgres://denialdesk:denialdesk@localhost:5432/denialdesk_test pnpm --filter @denialdesk/web db:migrate
+TEST_DATABASE_URL=postgres://denialdesk:denialdesk@localhost:5432/denialdesk_test uv run pytest
 ```
 
 ## Database
