@@ -1,11 +1,11 @@
 import type { Metadata } from "next";
-import { BillerControl } from "@/components/landing/biller-control";
+import { ChecksSection } from "@/components/landing/checks-section";
+import { CostSection } from "@/components/landing/cost-section";
 import { HowItWorks } from "@/components/landing/how-it-works";
 import { LandingFooter } from "@/components/landing/landing-footer";
 import { LandingHeader } from "@/components/landing/landing-header";
 import { LandingHero } from "@/components/landing/landing-hero";
 import { PilotOffer } from "@/components/landing/pilot-offer";
-import { SafetyChecks } from "@/components/landing/safety-checks";
 
 export const metadata: Metadata = {
   title: "Denialdesk: work every denial before its deadline",
@@ -19,9 +19,9 @@ export default function LandingPage() {
       <LandingHeader />
       <main>
         <LandingHero />
+        <CostSection />
         <HowItWorks />
-        <SafetyChecks />
-        <BillerControl />
+        <ChecksSection />
         <PilotOffer />
       </main>
       <LandingFooter />
