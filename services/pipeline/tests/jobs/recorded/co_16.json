@@ -1,0 +1,31 @@
+{
+  "code": "CO-16",
+  "action": "corrected_claim",
+  "biller_facts": {
+    "missingInfoKnown": "yes",
+    "correctedValue": "1234567893"
+  },
+  "output": {
+    "action": "corrected_claim",
+    "frequency_code": "7",
+    "original_payer_claim_control_number": "PCCN0001",
+    "claim_references": {
+      "patient_control_number": "PCN1001",
+      "payer_claim_control_number": "PCCN0001",
+      "service_date": "2026-09-14",
+      "amount_at_stake_cents": 10000
+    },
+    "changes": [
+      {
+        "field": "rendering_provider_npi",
+        "old_value": "",
+        "new_value": "1234567893",
+        "reason": "The rendering provider NPI was missing from the original claim."
+      }
+    ],
+    "stated_facts": {
+      "missingInfoKnown": "yes",
+      "correctedValue": "1234567893"
+    }
+  }
+}

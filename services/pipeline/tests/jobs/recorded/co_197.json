@@ -1,0 +1,38 @@
+{
+  "code": "CO-197",
+  "action": "appeal",
+  "biller_facts": {
+    "authObtained": "yes",
+    "authNumber": "AUTH-88213",
+    "authIssuedDate": "2026-08-20"
+  },
+  "output": {
+    "action": "appeal",
+    "recipient_block": "SYNTHETIC HEALTH PLAN\nAppeals Department",
+    "subject_line": "Appeal of claim PCCN0002",
+    "claim_references": {
+      "patient_control_number": "PCN1002",
+      "payer_claim_control_number": "PCCN0002",
+      "service_date": "2026-09-01",
+      "amount_at_stake_cents": 120000
+    },
+    "appeal_summary": "We are appealing the denial of this claim for missing authorization.",
+    "argument": "Authorization AUTH-88213 was issued on 2026-08-20, before the service. Your policy states \"Services performed within the approved authorization period are eligible for payment.\"",
+    "citations": [
+      {
+        "policy_id": "SHP-PA-01",
+        "quote": null
+      }
+    ],
+    "requested_outcome": "Please reprocess the claim and issue payment.",
+    "attachments": [
+      "Authorization approval AUTH-88213"
+    ],
+    "sign_off_block": "Sincerely,\n[BILLER NAME]",
+    "stated_facts": {
+      "authObtained": "yes",
+      "authNumber": "AUTH-88213",
+      "authIssuedDate": "2026-08-20"
+    }
+  }
+}

@@ -1,0 +1,33 @@
+{
+  "code": "CO-29",
+  "action": "appeal",
+  "biller_facts": {
+    "hasTimelyFilingProof": "yes",
+    "originalSubmissionDate": "2026-03-10",
+    "proofType": "clearinghouse report"
+  },
+  "output": {
+    "action": "appeal",
+    "recipient_block": "SYNTHETIC HEALTH PLAN\nAppeals Department",
+    "subject_line": "Appeal of claim PCCN0005",
+    "claim_references": {
+      "patient_control_number": "PCN1005",
+      "payer_claim_control_number": "PCCN0005",
+      "service_date": "2026-03-01",
+      "amount_at_stake_cents": 25000
+    },
+    "appeal_summary": "We are appealing the denial of this claim for late filing.",
+    "argument": "The claim was first submitted on 2026-03-10, within the filing limit. The clearinghouse report confirms the submission date.",
+    "citations": [],
+    "requested_outcome": "Please reprocess the claim and issue payment.",
+    "attachments": [
+      "Clearinghouse report showing submission on 2026-03-10"
+    ],
+    "sign_off_block": "Sincerely,\n[BILLER NAME]",
+    "stated_facts": {
+      "hasTimelyFilingProof": "yes",
+      "originalSubmissionDate": "2026-03-10",
+      "proofType": "clearinghouse report"
+    }
+  }
+}

@@ -1,0 +1,31 @@
+{
+  "code": "CO-4",
+  "action": "corrected_claim",
+  "biller_facts": {
+    "modifierKnown": "yes",
+    "modifier": "57"
+  },
+  "output": {
+    "action": "corrected_claim",
+    "frequency_code": "7",
+    "original_payer_claim_control_number": "PCCN0001",
+    "claim_references": {
+      "patient_control_number": "PCN1001",
+      "payer_claim_control_number": "PCCN0001",
+      "service_date": "2026-09-14",
+      "amount_at_stake_cents": 20000
+    },
+    "changes": [
+      {
+        "field": "modifier",
+        "old_value": "25",
+        "new_value": "57",
+        "reason": "The visit led to the decision for surgery, which modifier 57 reports."
+      }
+    ],
+    "stated_facts": {
+      "modifierKnown": "yes",
+      "modifier": "57"
+    }
+  }
+}

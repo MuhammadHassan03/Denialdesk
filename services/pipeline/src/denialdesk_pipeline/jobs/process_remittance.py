@@ -1,9 +1,7 @@
 """The process_remittance job: stored file to ranked Denial rows, in one transaction."""
 
 import logging
-from datetime import datetime
 from uuid import UUID
-from zoneinfo import ZoneInfo
 
 import psycopg
 from psycopg.rows import dict_row
@@ -13,6 +11,7 @@ from pydantic import BaseModel
 from denialdesk_pipeline.intake.stored_file import read_stored_file
 from denialdesk_pipeline.intake.x12_835 import parse_835
 from denialdesk_pipeline.intake.x12_835_models import Transaction835
+from denialdesk_pipeline.jobs.biller_clock import biller_today
 from denialdesk_pipeline.jobs.denial_rows import insert_denial
 from denialdesk_pipeline.jobs.job_queue import ClaimedJob, mark_job_done
 from denialdesk_pipeline.jobs.payers import find_or_create_payer
@@ -22,7 +21,6 @@ from denialdesk_pipeline.normalize.denials import normalize_transaction
 
 logger = logging.getLogger(__name__)
 
-DEFAULT_BILLER_TIMEZONE = "America/New_York"
 
 EOB_NOT_SUPPORTED_MESSAGE = (
     "Denialdesk can't read EOB PDFs yet. Upload the 835 for this payment if you have it."
@@ -67,7 +65,7 @@ def process_remittance_job(
         _fail_for_biller(connection, job, parse_result.biller_error)
         return
 
-    today = _biller_today(connection, remittance.organization_id)
+    today = biller_today(connection, remittance.organization_id)
     warnings = list(parse_result.warnings)
     counts = ProcessingCounts()
 
@@ -107,20 +105,6 @@ def _load_remittance(connection: psycopg.Connection, remittance_id: UUID) -> Rem
         source=remittance_row["source"],
         storage_uri=remittance_row["storage_uri"],
     )
-
-
-def _biller_today(connection: psycopg.Connection, organization_id: UUID) -> str:
-    with connection.cursor(row_factory=dict_row) as cursor:
-        cursor.execute(
-            "SELECT timezone FROM users WHERE organization_id = %s ORDER BY created_at LIMIT 1",
-            (organization_id,),
-        )
-        user_row = cursor.fetchone()
-    connection.commit()
-    timezone_name = DEFAULT_BILLER_TIMEZONE
-    if user_row is not None:
-        timezone_name = str(user_row["timezone"])
-    return datetime.now(ZoneInfo(timezone_name)).date().isoformat()
 
 
 def _fail_for_biller(connection: psycopg.Connection, job: ClaimedJob, biller_message: str) -> None:

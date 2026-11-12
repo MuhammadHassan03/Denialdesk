@@ -1,0 +1,31 @@
+{
+  "code": "CO-50",
+  "action": "appeal",
+  "biller_facts": {
+    "hasChartNotes": "yes",
+    "diagnosisCodes": "M54.5"
+  },
+  "output": {
+    "action": "appeal",
+    "recipient_block": "SYNTHETIC HEALTH PLAN\nAppeals Department",
+    "subject_line": "Appeal of claim PCCN0004",
+    "claim_references": {
+      "patient_control_number": "PCN1004",
+      "payer_claim_control_number": "PCCN0004",
+      "service_date": "2026-09-20",
+      "amount_at_stake_cents": 40000
+    },
+    "appeal_summary": "We are appealing the denial of this service as not medically necessary.",
+    "argument": "The chart notes for the service date document the need for this service under diagnosis M54.5.",
+    "citations": [],
+    "requested_outcome": "Please reprocess the claim and issue payment.",
+    "attachments": [
+      "Chart notes for date of service 2026-09-20"
+    ],
+    "sign_off_block": "Sincerely,\n[BILLER NAME]",
+    "stated_facts": {
+      "hasChartNotes": "yes",
+      "diagnosisCodes": "M54.5"
+    }
+  }
+}

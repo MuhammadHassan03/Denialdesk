@@ -1,3 +1,4 @@
+import { sql } from "drizzle-orm";
 import {
   boolean,
   date,
@@ -129,7 +130,7 @@ export const remittances = pgTable(
   ],
 );
 
-export const jobKind = pgEnum("job_kind", ["process_remittance"]);
+export const jobKind = pgEnum("job_kind", ["process_remittance", "draft_denial"]);
 
 export const jobStatus = pgEnum("job_status", ["queued", "running", "done", "failed"]);
 
@@ -140,6 +141,8 @@ export const jobs = pgTable(
     kind: jobKind("kind").notNull(),
     status: jobStatus("status").notNull().default("queued"),
     remittanceId: uuid("remittance_id").references(() => remittances.id),
+    // Set for draft_denial jobs only.
+    denialId: uuid("denial_id").references(() => denials.id),
     attempts: integer("attempts").notNull().default(0),
     lastErrorId: text("last_error_id"),
     runAfter: timestamp("run_after", { withTimezone: true }).notNull().defaultNow(),
@@ -147,7 +150,14 @@ export const jobs = pgTable(
     createdAt: createdAt(),
     updatedAt: updatedAt(),
   },
-  (table) => [index("jobs_status_run_after").on(table.status, table.runAfter)],
+  (table) => [
+    index("jobs_status_run_after").on(table.status, table.runAfter),
+    // A second click on "Write draft" must not queue a second job (F6). Only draft jobs
+    // have a denial id, so the job kind doesn't need to be part of the condition.
+    uniqueIndex("jobs_one_open_draft_per_denial")
+      .on(table.denialId)
+      .where(sql`${table.status} IN ('queued', 'running')`),
+  ],
 );
 
 export const payers = pgTable("payers", {
@@ -174,6 +184,8 @@ export const denialStatus = pgEnum("denial_status", [
   "written_off",
   "manual",
 ]);
+
+export const draftAction = pgEnum("draft_action", ["appeal", "corrected_claim"]);
 
 export const priorityBucket = pgEnum("priority_bucket", [
   "overdue",
@@ -217,6 +229,11 @@ export const denials = pgTable(
     status: denialStatus("status").notNull(),
     priorityBucket: priorityBucket("priority_bucket").notNull(),
     rankKey: text("rank_key").notNull(),
+    // The biller's facts-check answers and the action they lead to (F6). Null until saved.
+    billerFacts: jsonb("biller_facts"),
+    draftAction: draftAction("draft_action"),
+    // Plain-words message when the last draft attempt failed. Cleared when a draft is saved.
+    draftFailureMessage: text("draft_failure_message"),
     createdAt: createdAt(),
     updatedAt: updatedAt(),
   },
@@ -231,6 +248,90 @@ export const denials = pgTable(
     index("denials_queue_order").on(table.status, table.priorityBucket, table.rankKey),
   ],
 );
+
+// Payer policy text the drafts may quote (F5, F7). Synthetic until real policies are loaded.
+
+export const payerPolicies = pgTable(
+  "payer_policies",
+  {
+    id: uuid("id").primaryKey().defaultRandom(),
+    organizationId: uuid("organization_id")
+      .notNull()
+      .references(() => organizations.id),
+    payerId: uuid("payer_id")
+      .notNull()
+      .references(() => payers.id),
+    // The payer's own id for the policy, e.g. "NW-PA-2026-04". Drafts cite this.
+    policyId: text("policy_id").notNull(),
+    // The denial code this policy answers, e.g. "CO-197".
+    denialCode: text("denial_code").notNull(),
+    topic: text("topic").notNull(),
+    policyText: text("policy_text").notNull(),
+    sourceUrl: text("source_url").notNull(),
+    effectiveDate: date("effective_date", { mode: "string" }).notNull(),
+    createdAt: createdAt(),
+  },
+  (table) => [
+    uniqueIndex("payer_policies_payer_policy_date_unique").on(
+      table.payerId,
+      table.policyId,
+      table.effectiveDate,
+    ),
+    index("payer_policies_payer_code").on(table.payerId, table.denialCode),
+  ],
+);
+
+// NCCI procedure-to-procedure edits for the rules check (F7). Not tied to an organization.
+
+export const ncciEdits = pgTable(
+  "ncci_edits",
+  {
+    id: uuid("id").primaryKey().defaultRandom(),
+    columnOneCode: text("column_one_code").notNull(),
+    columnTwoCode: text("column_two_code").notNull(),
+    modifierAllowed: boolean("modifier_allowed").notNull(),
+    createdAt: createdAt(),
+  },
+  (table) => [uniqueIndex("ncci_edits_pair_unique").on(table.columnOneCode, table.columnTwoCode)],
+);
+
+// Drafts and their rules checks (F6, F7). A draft is never updated; a new version is a new row.
+
+export const drafts = pgTable(
+  "drafts",
+  {
+    id: uuid("id").primaryKey().defaultRandom(),
+    denialId: uuid("denial_id")
+      .notNull()
+      .references(() => denials.id),
+    version: integer("version").notNull(),
+    action: draftAction("action").notNull(),
+    // The model's output as it came back. Parsed into the draft shape before anything uses it.
+    content: jsonb("content").notNull(),
+    billerFacts: jsonb("biller_facts").notNull(),
+    modelName: text("model_name").notNull(),
+    promptVersion: text("prompt_version").notNull(),
+    inputTokens: integer("input_tokens").notNull(),
+    outputTokens: integer("output_tokens").notNull(),
+    costCents: integer("cost_cents").notNull(),
+    createdAt: createdAt(),
+  },
+  (table) => [uniqueIndex("drafts_denial_version_unique").on(table.denialId, table.version)],
+);
+
+export const rulesOutcome = pgEnum("rules_outcome", ["pass", "warn", "fail"]);
+
+export const rulesChecks = pgTable("rules_checks", {
+  id: uuid("id").primaryKey().defaultRandom(),
+  draftId: uuid("draft_id")
+    .notNull()
+    .unique()
+    .references(() => drafts.id),
+  overall: rulesOutcome("overall").notNull(),
+  // One entry per check: name, outcome, reason.
+  checks: jsonb("checks").notNull(),
+  createdAt: createdAt(),
+});
 
 // History (F13). Append-only: a database trigger rejects UPDATE and DELETE.
 
