@@ -2,31 +2,41 @@
 
 /* Design tokens from the "Denialdesk biller screens" design canvas. */
 @theme {
-  --font-sans: var(--font-geist), system-ui, sans-serif;
-  --font-mono: var(--font-geist-mono), ui-monospace, monospace;
-  --font-serif: var(--font-source-serif), Georgia, serif;
+  --font-sans: "Public Sans Variable", system-ui, sans-serif;
+  --font-display: "Archivo Variable", "Public Sans Variable", system-ui, sans-serif;
+  --font-mono: "IBM Plex Mono", ui-monospace, monospace;
+  --font-serif: "Source Serif 4 Variable", Georgia, serif;
 
-  --color-canvas: #f4f5f7;
-  --color-ink: #0e1726;
-  --color-ink-soft: #1d2939;
-  --color-muted: #4b5565;
-  --color-subtle: #344054;
-  --color-faint: #98a2b3;
-  --color-line: #e3e6eb;
-  --color-line-soft: #eef0f3;
-  --color-line-strong: #d0d5dd;
-  --color-well: #f9fafb;
+  /* The palette comes from the biller's desk: white paper, the red ink claim forms are
+     printed in, blue ballpoint for anything the biller signs off, yellow highlighter
+     for the money. */
+  --color-canvas: #e9eef3;
+  --color-paper: #ffffff;
+  --color-ink: #16223b;
+  --color-ink-soft: #24324f;
+  --color-muted: #4a5670;
+  --color-subtle: #34405a;
+  --color-faint: #8f9ab0;
+  --color-line: #dbe2ea;
+  --color-line-soft: #e9eef3;
+  --color-line-strong: #c4cedb;
+  --color-well: #f5f7fa;
 
-  --color-brand: #0b6e66;
-  --color-brand-dark: #08534d;
-  --color-brand-mid: #3e9e93;
-  --color-brand-light: #9ed3cc;
-  --color-brand-border: #7fc4bb;
-  --color-brand-soft: #e3f2f0;
-  --color-brand-tint: #f3faf9;
-  --color-brand-shadow: #bfe2dd;
-  --color-brand-night: #0a3d39;
-  --color-brand-mist: #c9e8e3;
+  --color-brand: #1f3fa6;
+  --color-brand-dark: #172f7d;
+  --color-brand-mid: #5b77cf;
+  --color-brand-light: #a9b9ea;
+  --color-brand-border: #8fa3e0;
+  --color-brand-soft: #e6ebfa;
+  --color-brand-tint: #f4f6fd;
+  --color-brand-shadow: #c5d0f2;
+  --color-brand-night: #101e52;
+  --color-brand-mist: #d3dcf6;
+
+  --color-form: #c8102e;
+  --color-form-line: #e7a3ae;
+  --color-form-soft: #fbe9ec;
+  --color-marker: #ffe45c;
 
   --color-good: #067647;
   --color-good-dark: #054f31;
@@ -122,4 +132,27 @@
     animation: none !important;
     transition: none !important;
   }
+}
+
+/* Headlines are set condensed and heavy, like the printed labels on a claim form. */
+@utility display {
+  font-family: var(--font-display);
+  font-stretch: 70%;
+  font-weight: 800;
+  line-height: 0.98;
+  letter-spacing: -0.005em;
+}
+
+/* A stroke of highlighter behind the text, the way a biller marks the amount on an EOB. */
+@utility marker {
+  background: linear-gradient(
+    transparent 12%,
+    var(--color-marker) 12%,
+    var(--color-marker) 88%,
+    transparent 88%
+  );
+  padding-inline: 0.18em;
+  margin-inline: -0.18em;
+  box-decoration-break: clone;
+  -webkit-box-decoration-break: clone;
 }
