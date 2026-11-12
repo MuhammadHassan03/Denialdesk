@@ -11,6 +11,8 @@ RETRY_BACKOFF_SECONDS = 60
 # A running job whose worker hasn't finished in this long is treated as crashed.
 STALE_JOB_SECONDS = 600
 
+DRAFT_FAILED_MESSAGE = "We couldn't write the draft right now. Try again in a minute."
+
 PROCESSING_FAILED_MESSAGE = (
     "Processing failed after 3 tries. Click Try again, and if it keeps failing,"
     " contact support with the error ID."
@@ -21,6 +23,7 @@ class ClaimedJob(BaseModel):
     job_id: UUID
     kind: str
     remittance_id: UUID | None
+    denial_id: UUID | None = None
     attempts: int
 
 
@@ -35,7 +38,7 @@ WHERE id = (
     FOR UPDATE SKIP LOCKED
     LIMIT 1
 )
-RETURNING id, kind, remittance_id, attempts
+RETURNING id, kind, remittance_id, denial_id, attempts
 """
 
 
@@ -55,6 +58,7 @@ def claim_next_job(connection: psycopg.Connection) -> ClaimedJob | None:
         job_id=job_row["id"],
         kind=job_row["kind"],
         remittance_id=job_row["remittance_id"],
+        denial_id=job_row["denial_id"],
         attempts=job_row["attempts"],
     )
 
@@ -101,5 +105,13 @@ def record_job_crash(connection: psycopg.Connection, job: ClaimedJob, error_id: 
             WHERE id = %s
             """,
             (error_id, PROCESSING_FAILED_MESSAGE, job.remittance_id),
+        )
+        # A draft job that keeps crashing must not leave the denial stuck on "drafting".
+        cursor.execute(
+            """
+            UPDATE denials SET status = 'new', draft_failure_message = %s, updated_at = now()
+            WHERE id = %s AND status = 'drafting'
+            """,
+            (DRAFT_FAILED_MESSAGE, job.denial_id),
         )
     return False
