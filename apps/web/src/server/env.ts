@@ -42,3 +42,12 @@ export function readServerEnv(): ServerEnv {
   }
   return result.data;
 }
+
+// The database URL alone, or null when it isn't set. Unlike readServerEnv this never throws,
+// so a build on a host that has no database yet can still import the database client.
+export function readDatabaseUrl(): string | null {
+  if (process.env.DATABASE_URL === undefined) {
+    loadRootEnvFile();
+  }
+  return process.env.DATABASE_URL ?? null;
+}
